@@ -1,6 +1,7 @@
 from rest_framework import serializers
 import uuid
 from app.cv_generator import Cv_Generator
+import ast
 
 
 class CvSerializer (serializers.Serializer) : 
@@ -9,15 +10,19 @@ class CvSerializer (serializers.Serializer) :
     email = serializers.EmailField()
     address = serializers.CharField()
     about_me = serializers.CharField()
-    projects = serializers.ListField()
+    projects = serializers.CharField()
     cv_type = serializers.ChoiceField(choices=(('light','light'),('dark','dark')))
 
-    def projects_validate(self, value):
+    # def projects_validate(self, value):
+    #     print('Project : ', value)
+    #     value = ast.literal_eval(value)
+    #     print('Project : ', value)
+    #     print(value)
 
-        if len(value) > 4 :
-            raise serializers.ValidationError({'message',"much projects you enter"})
+    #     if len(value) > 4 :
+    #         raise serializers.ValidationError({'message',"much projects you enter"})
         
-        return value
+    #     return value
     
 
     def save(self, **kwargs):
@@ -33,7 +38,7 @@ class CvSerializer (serializers.Serializer) :
 
         cv = Cv_Generator(
             personl_info = personl,
-            projects = data['projects'],
+            projects = ast.literal_eval(data['projects']),
             about_me = data['about_me']
         )
 
